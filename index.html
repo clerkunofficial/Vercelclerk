@@ -1,0 +1,986 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#16204F">
+<title>ClerkUnofficial</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Vadodara:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F2F4F1; --card:#FFFFFF; --ink:#16204F; --ink2:#4B557A; --line:#D5DAD2;
+  --accent:#1F3A93; --onacc:#FFFFFF; --stamp:#B3283D; --ok:#2B7A57; --tab:#E5EAE1;
+  color-scheme: light dark;
+}
+@media (prefers-color-scheme: dark){
+  :root{ --paper:#0F1428; --card:#171D3A; --ink:#E9ECF8; --ink2:#9AA4CC; --line:#2A3260;
+         --accent:#8EA2FF; --onacc:#0F1428; --stamp:#FF7A8E; --ok:#5FD2A0; --tab:#1C2345; }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);
+  font-family:'Hind Vadodara','Noto Sans Gujarati',system-ui,-apple-system,'Segoe UI',sans-serif;line-height:1.5;font-size:16px}
+[hidden]{display:none!important}
+a{color:var(--accent)}
+h1,h2,h3,h4{margin:0;line-height:1.25}
+h2{font-size:1.35rem}
+h3{font-size:1.05rem}
+h4{font-size:1rem}
+p{margin:.4rem 0}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.small{font-size:.85rem;color:var(--ink2)}
+.late{color:var(--stamp)}
+.sp{flex:1}
+.row{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center}
+
+/* layout */
+#app{min-height:100vh;display:grid;grid-template-columns:1fr}
+header.top{position:sticky;top:0;z-index:5;background:var(--paper);border-bottom:1px solid var(--line);
+  display:flex;align-items:center;gap:.75rem;padding:.6rem 1rem}
+.brand{font-weight:700;font-size:1.15rem}
+header.top a{font-weight:600;text-decoration:none;color:var(--ink2);font-size:.95rem}
+nav#tabs{position:fixed;bottom:0;left:0;right:0;z-index:6;display:flex;overflow-x:auto;background:var(--tab);
+  border-top:1px solid var(--line);padding:0 .25rem env(safe-area-inset-bottom)}
+nav#tabs a{flex:0 0 auto;padding:.8rem .85rem;color:var(--ink2);text-decoration:none;font-weight:600;
+  border-top:3px solid transparent;font-size:.95rem}
+nav#tabs a.on{color:var(--ink);border-top-color:var(--stamp)}
+main{padding:1rem 1rem 6.5rem;max-width:960px;width:100%;margin:0 auto}
+@media (min-width:900px){
+  #app{grid-template-columns:190px 1fr;grid-template-rows:auto 1fr}
+  header.top{grid-column:1/3}
+  nav#tabs{position:sticky;top:53px;bottom:auto;left:auto;right:auto;align-self:start;height:calc(100vh - 53px);
+    flex-direction:column;border-top:0;border-right:1px solid var(--line);padding:1rem 0;overflow:visible}
+  nav#tabs a{border-top:0;border-left:3px solid transparent;padding:.65rem 1.2rem}
+  nav#tabs a.on{border-left-color:var(--stamp)}
+  main{padding:1.5rem 2rem 3rem}
+}
+
+/* controls */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.35rem;font:inherit;font-weight:600;cursor:pointer;
+  border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:6px;padding:.5rem .9rem;text-decoration:none;min-height:2.5rem}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--onacc)}
+.btn.ghost{background:transparent}
+.btn.danger{color:var(--stamp);border-color:var(--stamp);background:transparent}
+.btn.small{padding:.3rem .65rem;min-height:2rem;font-size:.88rem}
+input,select,textarea{font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:6px;
+  padding:.55rem .65rem;width:100%;min-height:2.6rem}
+textarea{resize:vertical}
+input[type=checkbox]{width:1.2rem;height:1.2rem;min-height:0;accent-color:var(--accent)}
+.search{margin:.75rem 0}
+.fld{display:block;margin-bottom:.8rem}
+.fld>span{display:block;font-size:.85rem;font-weight:600;color:var(--ink2);margin-bottom:.2rem}
+.chk{display:flex;gap:.5rem;align-items:center}
+.mhead{display:flex;justify-content:space-between;align-items:center;gap:.5rem;flex-wrap:wrap;margin-bottom:.5rem}
+.pills{display:flex;gap:.4rem;overflow-x:auto;padding-bottom:.6rem;margin-bottom:.6rem;border-bottom:1px solid var(--line)}
+.pills a,.pill-add{flex:0 0 auto;padding:.4rem .85rem;border:1px solid var(--line);border-radius:999px;text-decoration:none;
+  color:var(--ink2);font-weight:600;font-size:.92rem;background:transparent;font-family:inherit;cursor:pointer}
+.pills a.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.pill-add{border-style:dashed}
+.empty{color:var(--ink2);padding:1rem 0}
+
+/* cards and lists */
+.card{background:var(--card);border:1px solid var(--line);border-radius:6px;margin:.5rem 0;overflow:hidden}
+.cmain{padding:.75rem .9rem;cursor:pointer}
+.cmain h3{margin-bottom:.25rem}
+.chips{display:flex;flex-wrap:wrap;gap:.35rem}
+.chip{font-size:.82rem;border:1px solid var(--line);border-radius:4px;padding:.05rem .45rem;color:var(--ink2);background:var(--paper)}
+.chip i{font-style:normal;font-weight:600;color:var(--ink)}
+.note{font-size:.9rem;color:var(--ink2);margin:.35rem 0 0;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;white-space:pre-wrap}
+.acts{display:flex;gap:.4rem;flex-wrap:wrap;padding:0 .9rem .75rem}
+.blk{margin:1.1rem 0}
+.blk>h3,.blk>summary{margin-bottom:.4rem}
+details>summary{cursor:pointer;font-weight:600}
+.hello{margin-bottom:.8rem}
+.qadd{display:flex;gap:.5rem;margin:.5rem 0 1rem}
+.qadd input[type=date]{max-width:11rem}
+
+/* tasks */
+.task{display:flex;gap:.7rem;align-items:flex-start;background:var(--card);border:1px solid var(--line);border-radius:6px;padding:.6rem .75rem;margin:.4rem 0}
+.task.done .ttl{text-decoration:line-through;color:var(--ink2)}
+.tick{flex:0 0 1.7rem;width:1.7rem;height:1.7rem;border-radius:50%;border:2px solid var(--accent);background:transparent;color:var(--accent);
+  font-weight:700;cursor:pointer;display:grid;place-items:center;padding:0;margin-top:.1rem}
+.task.done .tick{background:var(--ok);border-color:var(--ok);color:#fff}
+.tmain{flex:1;cursor:pointer;min-width:0}
+.ttl{font-weight:600;overflow-wrap:anywhere}
+.meta{display:flex;gap:.6rem;flex-wrap:wrap;font-size:.82rem;color:var(--ink2)}
+.calhead{display:flex;justify-content:space-between;align-items:center;margin:.4rem 0}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.cal .wd{text-align:center;font-size:.78rem;color:var(--ink2);padding:.2rem 0}
+.day{position:relative;aspect-ratio:1/1;min-height:2.6rem;border:1px solid var(--line);background:var(--card);color:var(--ink);
+  border-radius:4px;cursor:pointer;font:inherit;padding:.2rem}
+.day b{font-weight:600}
+.day i{position:absolute;right:.2rem;bottom:.15rem;font-style:normal;font-size:.7rem;font-weight:700;color:var(--stamp)}
+.day.today{border-color:var(--stamp);border-width:2px}
+.day.sel{background:var(--ink);color:var(--paper)}
+.day.sel i{color:var(--paper)}
+
+/* record branch: village folders with stamped counts */
+.shelf{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:1.1rem .8rem;margin-top:1rem}
+.folder{position:relative;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:3px 10px 10px 10px;
+  padding:1.2rem .8rem .8rem;min-height:5.8rem;color:var(--ink);cursor:pointer;font:inherit;display:flex;flex-direction:column;gap:.15rem}
+.folder::before{content:"";position:absolute;left:-1px;top:-9px;width:46%;height:9px;background:var(--card);border:1px solid var(--line);
+  border-bottom:0;border-radius:6px 6px 0 0}
+.fname{font-weight:700;padding-right:2.6rem;overflow-wrap:anywhere}
+.fmeta{font-size:.8rem;color:var(--ink2)}
+.stamp{position:absolute;right:.6rem;top:.7rem;width:2.4rem;height:2.4rem;border:2px solid var(--stamp);color:var(--stamp);border-radius:50%;
+  display:grid;place-items:center;font-weight:700;transform:rotate(-8deg);font-size:.95rem}
+.stamp.zero{border-color:var(--line);color:var(--ink2);border-style:dashed}
+.crumb{display:flex;gap:.6rem;align-items:center;margin:.8rem 0}
+.gsec{border-top:1px solid var(--line);padding:.8rem 0}
+.ghead{display:flex;justify-content:space-between;gap:.5rem;align-items:center;flex-wrap:wrap;margin-bottom:.3rem}
+.rrow{display:flex;gap:.6rem;align-items:flex-start;padding:.5rem 0;border-bottom:1px dashed var(--line)}
+.rsel{padding-top:.2rem}
+.rmain{flex:1;min-width:0;cursor:pointer}
+.rname{font-weight:600;overflow-wrap:anywhere}
+.qbar{position:sticky;top:53px;z-index:4;display:flex;gap:.6rem;align-items:center;background:var(--ink);color:var(--paper);
+  border-radius:6px;padding:.5rem .75rem;margin:.5rem 0}
+.qbar .btn.ghost{color:var(--paper);border-color:var(--paper)}
+.tscroll{overflow:auto;border:1px solid var(--line);border-radius:6px;background:var(--card)}
+table.cov{border-collapse:collapse;min-width:100%;font-size:.88rem}
+table.cov th,table.cov td{border-bottom:1px solid var(--line);padding:.4rem .6rem;text-align:center;white-space:nowrap}
+table.cov thead th{background:var(--tab);position:sticky;top:0}
+table.cov th.vn{text-align:left;position:sticky;left:0;background:var(--card);cursor:pointer}
+table.cov td{cursor:pointer}
+table.cov td.miss{color:var(--stamp);font-weight:700}
+table.cov td.has{color:var(--ok);font-weight:700}
+table.prev{border-collapse:collapse;font-size:.82rem;min-width:100%}
+table.prev td{border:1px solid var(--line);padding:.2rem .45rem;white-space:nowrap;max-width:14rem;overflow:hidden;text-overflow:ellipsis}
+table.prev tr.hd td{font-weight:700;background:var(--tab)}
+
+/* search */
+.eng{display:flex;justify-content:space-between;align-items:center;gap:.5rem;padding:.35rem 0;border-bottom:1px dashed var(--line)}
+.eng label{display:flex;gap:.5rem;align-items:center;font-weight:600}
+.bigsearch{display:flex;gap:.5rem;margin:.6rem 0}
+
+/* chat */
+#chatlog{display:flex;flex-direction:column;gap:.6rem;margin:.8rem 0;min-height:30vh}
+.msg{max-width:92%;padding:.6rem .8rem;border-radius:8px;white-space:pre-wrap;overflow-wrap:anywhere;border:1px solid var(--line);background:var(--card)}
+.msg.u{align-self:flex-end;background:var(--accent);color:var(--onacc);border-color:var(--accent)}
+.msg.err{border-color:var(--stamp);color:var(--stamp)}
+.chatin{display:flex;gap:.5rem;align-items:flex-end}
+.sug{margin-top:.5rem}
+.sug button{font:inherit;cursor:pointer}
+
+/* settings */
+.lmrow{display:flex;gap:.5rem;margin:.3rem 0}
+
+/* dialog, toast, auth */
+dialog{border:1px solid var(--line);border-radius:10px;padding:0;background:var(--card);color:var(--ink);width:min(580px,94vw);max-height:90vh}
+dialog::backdrop{background:rgba(10,14,35,.55)}
+.dlg{padding:1.1rem;max-height:90vh;overflow:auto}
+.dlg h3{margin-bottom:.8rem}
+.dbtns{display:flex;gap:.5rem;align-items:center;margin-top:.6rem}
+.cfrow{display:grid;grid-template-columns:1fr 9rem;gap:.4rem;padding:.6rem 0;border-bottom:1px dashed var(--line)}
+.cfrow .cfo,.cfrow .cfacts{grid-column:1/3}
+.cfacts{display:flex;gap:.4rem}
+#toast{position:fixed;left:50%;bottom:5rem;transform:translate(-50%,10px);background:var(--ink);color:var(--paper);padding:.55rem .9rem;border-radius:6px;
+  opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:50;max-width:90vw;text-align:center}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+#boot{padding:3rem 1.2rem;text-align:center;color:var(--ink2)}
+#auth{min-height:100vh;display:grid;place-items:center;padding:1rem}
+.authcard{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:1.5rem;width:min(400px,100%)}
+.authcard h1{font-size:1.5rem;margin-bottom:.3rem}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div id="boot">Loading…</div>
+
+<div id="auth" hidden>
+  <div class="authcard">
+    <h1 id="auth-title">ClerkUnofficial</h1>
+    <p class="small">Sign in to open your dashboard.</p>
+    <label class="fld"><span>Email</span><input id="em" type="email" autocomplete="username"></label>
+    <label class="fld"><span>Password</span><input id="pw" type="password" autocomplete="current-password" data-enter="login"></label>
+    <p id="aerr" class="late small"></p>
+    <div class="row">
+      <button class="btn primary" data-act="login">Sign in</button>
+      <button class="btn ghost" data-act="signup">Create account</button>
+    </div>
+    <p class="small">Use Create account only the first time.</p>
+  </div>
+</div>
+
+<div id="app" hidden>
+  <header class="top">
+    <span class="brand" id="brand">ClerkUnofficial</span>
+    <span class="sp"></span>
+    <a href="#settings">Settings</a>
+  </header>
+  <nav id="tabs" aria-label="Main sections"></nav>
+  <main id="view"></main>
+</div>
+
+<dialog id="dlg"></dialog>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+'use strict';
+/* ---------- basics ---------- */
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let sb=null,user=null,cache={};
+const view=$('#view');
+const ui={q:{},cal:null,rec:{view:'shelf',vid:null,q:''},queue:new Set(),sheet:null,chat:[],busy:false,upG:null,
+  engOff:new Set(JSON.parse(localStorage.getItem('engOff')||'[]'))};
+
+const pad=n=>String(n).padStart(2,'0');
+const ymd=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const today=()=>ymd(new Date());
+const parseD=s=>new Date(s+'T00:00:00');
+const addDays=(s,n)=>{const d=parseD(s);d.setDate(d.getDate()+n);return ymd(d)};
+function nextDate(s,rep){
+  if(rep==='Daily')return addDays(s,1);
+  if(rep==='Weekly')return addDays(s,7);
+  const d=parseD(s),day=d.getDate();
+  d.setDate(1);d.setMonth(d.getMonth()+1);
+  const last=new Date(d.getFullYear(),d.getMonth()+1,0).getDate();
+  d.setDate(Math.min(day,last));return ymd(d);
+}
+const fmtDate=s=>{const d=parseD(s),o={day:'numeric',month:'short'};if(d.getFullYear()!==new Date().getFullYear())o.year='numeric';return d.toLocaleDateString('en-IN',o)};
+const fmtSize=b=>b>1048576?(b/1048576).toFixed(1)+' MB':Math.max(1,Math.round(b/1024))+' KB';
+const byDate=(a,b)=>(a.data.date||'')<(b.data.date||'')?-1:1;
+
+function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove('on'),3400);}
+async function run(fn){try{return await fn()}catch(e){console.error(e);toast(e.message||'Something went wrong');return undefined}}
+
+/* ---------- database layer ---------- */
+const find=(kind,id)=>(cache[kind]||[]).find(r=>r.id===id);
+async function loadAll(){
+  cache={};let from=0;const step=1000;
+  for(;;){
+    const {data,error}=await sb.from('items').select('id,kind,data,created_at').order('created_at',{ascending:true}).order('id').range(from,from+step-1);
+    if(error)throw error;
+    data.forEach(r=>{(cache[r.kind]=cache[r.kind]||[]).push(r)});
+    if(data.length<step)break;from+=step;
+  }
+}
+async function dbAdd(kind,data){
+  const {data:row,error}=await sb.from('items').insert({kind,data}).select('id,kind,data,created_at').single();
+  if(error)throw error;(cache[kind]=cache[kind]||[]).push(row);return row;
+}
+async function dbUpd(row){const {error}=await sb.from('items').update({data:row.data}).eq('id',row.id);if(error)throw error;}
+async function dbDel(row){
+  const {error}=await sb.from('items').delete().eq('id',row.id);if(error)throw error;
+  cache[row.kind]=(cache[row.kind]||[]).filter(r=>r.id!==row.id);
+}
+const cfgRow=k=>(cache.cfg||[]).find(r=>r.data.key===k);
+const cfgGet=(k,d)=>{const r=cfgRow(k);return r?r.data.value:(d===undefined?undefined:structuredClone(d))};
+async function cfgSet(k,v){const r=cfgRow(k);if(r){r.data={key:k,value:v};await dbUpd(r);}else await dbAdd('cfg',{key:k,value:v});}
+const appName=()=>cfgGet('appName','ClerkUnofficial');
+
+/* ---------- storage layer ---------- */
+async function prep(file){
+  if((file.type||'').startsWith('image/')){
+    try{
+      const bmp=await createImageBitmap(file);
+      const s=Math.min(1,2000/Math.max(bmp.width,bmp.height));
+      const c=document.createElement('canvas');c.width=Math.round(bmp.width*s);c.height=Math.round(bmp.height*s);
+      c.getContext('2d').drawImage(bmp,0,0,c.width,c.height);
+      const blob=await new Promise(r=>c.toBlob(r,'image/jpeg',.72));
+      if(blob&&blob.size<file.size)return{blob,type:'image/jpeg',ext:'jpg'};
+    }catch(e){}
+  }
+  return{blob:file,type:file.type||'application/octet-stream',ext:(file.name.split('.').pop()||'bin').toLowerCase().replace(/[^a-z0-9]/g,'')||'bin'};
+}
+async function putFile(file,folder){
+  const p=await prep(file);
+  const safe=file.name.replace(/\.[^.]+$/,'').replace(/[^a-zA-Z0-9_-]/g,'_').slice(0,40)||'file';
+  const path=`${user.id}/${folder}/${Date.now()}_${safe}.${p.ext}`;
+  const {error}=await sb.storage.from('records').upload(path,p.blob,{contentType:p.type});
+  if(error)throw error;
+  return{path,size:p.blob.size,type:p.type};
+}
+async function openStored(path){
+  const w=window.open('','_blank');
+  const {data,error}=await sb.storage.from('records').createSignedUrl(path,3600);
+  if(error||!data){if(w)w.close();toast('Could not open the file');return;}
+  if(w)w.location.href=data.signedUrl;else location.href=data.signedUrl;
+}
+const dropStored=async path=>{try{await sb.storage.from('records').remove([path])}catch(e){}};
+
+/* ---------- dialogs ---------- */
+function modal(title,body,o={}){
+  return new Promise(res=>{
+    const d=$('#dlg');let done=false;
+    const fin=a=>{if(done)return;done=true;try{d.close()}catch(e){}res({action:a,root:d});};
+    d.innerHTML=`<div class="dlg"><h3>${esc(title)}</h3><div class="dbody">${body}</div><div class="dbtns">${o.danger?`<button class="btn danger" data-d="danger">${esc(o.danger)}</button>`:''}<span class="sp"></span><button class="btn ghost" data-d="cancel">${esc(o.cancel||'Cancel')}</button>${o.ok===false?'':`<button class="btn primary" data-d="ok">${esc(o.ok||'Save')}</button>`}</div></div>`;
+    d.onclick=e=>{const b=e.target.closest('[data-d]');if(b)fin(b.dataset.d);else if(e.target===d)fin('cancel');};
+    d.oncancel=e=>{e.preventDefault();fin('cancel');};
+    d.showModal();
+  });
+}
+const gv=(root,n)=>{const el=root.querySelector(`[name="${n}"]`);return el?el.value.trim():''};
+
+/* ---------- sections (editable modules) ---------- */
+const DEF_MODULES={
+  gym:{group:'personal',title:'Gym',fields:[
+    {k:'date',l:'Date',t:'date'},{k:'workout',l:'Workout',t:'text'},{k:'minutes',l:'Minutes',t:'number'},
+    {k:'weight',l:'Body weight (kg)',t:'number'},{k:'note',l:'Notes',t:'long'}]},
+  books:{group:'personal',title:'Books',fields:[
+    {k:'title',l:'Title',t:'text'},{k:'author',l:'Author',t:'text'},
+    {k:'status',l:'Status',t:'select',o:['Want to read','Reading','Finished']},
+    {k:'pages',l:'Pages read',t:'number'},{k:'rating',l:'Rating',t:'select',o:['1','2','3','4','5']},{k:'note',l:'Notes',t:'long'}]},
+  movies:{group:'personal',title:'Movies',fields:[
+    {k:'title',l:'Title',t:'text'},{k:'status',l:'Status',t:'select',o:['Want to watch','Watched']},
+    {k:'rating',l:'Rating',t:'select',o:['1','2','3','4','5']},{k:'note',l:'Notes',t:'long'}]},
+  series:{group:'personal',title:'Series',fields:[
+    {k:'title',l:'Title',t:'text'},{k:'status',l:'Status',t:'select',o:['Want to watch','Watching','Finished']},
+    {k:'where',l:'Season / episode',t:'text'},{k:'rating',l:'Rating',t:'select',o:['1','2','3','4','5']},{k:'note',l:'Notes',t:'long'}]},
+  salary:{group:'office',title:'Salary entries',fields:[
+    {k:'month',l:'Month',t:'text'},{k:'employee',l:'Employee',t:'text'},{k:'basic',l:'Basic pay',t:'number'},
+    {k:'da',l:'DA',t:'number'},{k:'hra',l:'HRA',t:'number'},{k:'other',l:'Other pay',t:'number'},
+    {k:'ded',l:'Deductions',t:'number'},{k:'net',l:'Net pay',t:'number'},{k:'note',l:'Notes',t:'long'}]},
+  exams:{group:'office',title:'Exam and training',fields:[
+    {k:'title',l:'Title',t:'text'},{k:'subject',l:'Subject',t:'text'},
+    {k:'kind',l:'Type',t:'select',o:['Notes','Syllabus','Circular','Training','Video','Other']},
+    {k:'link',l:'Link',t:'link'},{k:'file',l:'File',t:'file'},{k:'note',l:'Notes',t:'long'}]},
+  service:{group:'office',title:'Service records',fields:[
+    {k:'item',l:'Record',t:'text'},
+    {k:'kind',l:'Type',t:'select',o:['Appointment','Increment','Promotion','Leave','Training','Transfer','Other']},
+    {k:'date',l:'Date',t:'date'},{k:'ref',l:'Order or reference no.',t:'text'},{k:'file',l:'File',t:'file'},{k:'note',l:'Notes',t:'long'}]},
+  official:{group:'links',title:'Official links',track:true,fields:[
+    {k:'name',l:'Name',t:'text'},{k:'url',l:'Web address',t:'link'},{k:'cat',l:'Category',t:'text'},{k:'note',l:'Notes',t:'long'}]},
+  curiosity:{group:'links',title:'Curiosity links',track:true,fields:[
+    {k:'name',l:'Name',t:'text'},{k:'url',l:'Web address',t:'link'},{k:'cat',l:'Category',t:'text'},{k:'note',l:'Notes',t:'long'}]},
+  contacts:{group:'contacts',title:'Contacts',az:true,fields:[
+    {k:'name',l:'Name',t:'text'},{k:'desig',l:'Designation',t:'text'},{k:'office',l:'Office',t:'text'},
+    {k:'village',l:'Village',t:'text'},{k:'phone',l:'Phone',t:'phone'},
+    {k:'cat',l:'Category',t:'select',o:['Talati','Officer','Office staff','Personal','Other']},{k:'note',l:'Notes',t:'long'}]}
+};
+const TYPES={text:'Short text',long:'Long text',number:'Number',date:'Date',select:'Choice list',check:'Yes or no',link:'Web link',phone:'Phone number',file:'File'};
+const getModules=()=>cfgGet('modules',null)||structuredClone(DEF_MODULES);
+const vt=(f,v)=>{if(v==null||v==='')return'';if(f.t==='file')return v.name||'';if(f.t==='check')return v?'Yes':'';return String(v)};
+
+function fieldInput(f,v){
+  const n=`name="${esc(f.k)}"`;
+  switch(f.t){
+    case'long':return`<textarea ${n} rows="3">${esc(v)}</textarea>`;
+    case'number':return`<input ${n} type="number" step="any" inputmode="decimal" value="${esc(v)}">`;
+    case'date':return`<input ${n} type="date" value="${esc(v)}">`;
+    case'select':{const o=[...(f.o||[])];if(v&&!o.includes(v))o.push(v);
+      return`<select ${n}><option value=""></option>${o.map(x=>`<option ${x===v?'selected':''}>${esc(x)}</option>`).join('')}</select>`;}
+    case'check':return`<label class="chk"><input ${n} type="checkbox" ${v?'checked':''}> Yes</label>`;
+    case'file':return`<input ${n} type="file">${v&&v.path?`<div class="small">Current file: ${esc(v.name)}. Choose a new one to replace it.</div>`:''}`;
+    case'link':return`<input ${n} type="url" inputmode="url" placeholder="https://" value="${esc(v)}">`;
+    case'phone':return`<input ${n} type="tel" inputmode="tel" value="${esc(v)}">`;
+    default:return`<input ${n} type="text" value="${esc(v)}">`;
+  }
+}
+async function readForm(root,fields,old){
+  const out={...old};
+  for(const f of fields){
+    const el=root.querySelector(`[name="${f.k}"]`);if(!el)continue;
+    if(f.t==='check')out[f.k]=el.checked;
+    else if(f.t==='number')out[f.k]=el.value===''?'':Number(el.value);
+    else if(f.t==='file'){
+      if(el.files&&el.files[0]){
+        toast('Uploading file…');
+        const u=await putFile(el.files[0],'files');
+        if(old&&old[f.k]&&old[f.k].path)dropStored(old[f.k].path);
+        out[f.k]={path:u.path,name:el.files[0].name,size:u.size};
+      }
+    }else out[f.k]=el.value.trim();
+  }
+  return out;
+}
+
+function moduleList(id){
+  const m=getModules()[id];let rows=[...(cache['m:'+id]||[])];
+  const q=(ui.q[id]||'').toLowerCase().trim();
+  if(q)rows=rows.filter(r=>m.fields.some(f=>vt(f,r.data[f.k]).toLowerCase().includes(q)));
+  const df=m.fields.find(f=>f.t==='date'),f0=m.fields[0];
+  rows.sort((a,b)=>{
+    if(m.track){const c=(b.data.clicks||0)-(a.data.clicks||0);if(c)return c;}
+    if(m.az)return vt(f0,a.data[f0.k]).localeCompare(vt(f0,b.data[f0.k]));
+    if(df){const x=a.data[df.k]||'',y=b.data[df.k]||'';if(x!==y)return x<y?1:-1;}
+    return a.created_at<b.created_at?1:-1;
+  });
+  if(!rows.length)return`<p class="empty">${q?'Nothing matches your search.':'Nothing here yet. Tap Add to create the first entry.'}</p>`;
+  return rows.map(r=>card(m,id,r)).join('');
+}
+function card(m,id,r){
+  const d=r.data,f0=m.fields[0];
+  const title=vt(f0,d[f0.k])||'(no title)';
+  let chips='',acts='',notes='';
+  m.fields.slice(1).forEach(f=>{
+    const v=d[f.k],t=vt(f,v);if(!t)return;
+    if(f.t==='link')acts+=`<a class="btn small" href="${esc(v)}" target="_blank" rel="noopener" data-act="bump" data-id="${r.id}">Open link</a>`;
+    else if(f.t==='phone'){const n=String(v).replace(/\D/g,'');const wa=n.length===10?'91'+n:n;
+      acts+=`<a class="btn small" href="tel:${esc(v)}">Call ${esc(v)}</a><a class="btn small" href="https://wa.me/${wa}" target="_blank" rel="noopener">WhatsApp</a>`;}
+    else if(f.t==='file')acts+=`<button class="btn small" data-act="ofile" data-path="${esc(v.path)}">Open ${esc(v.name)}</button>`;
+    else if(f.t==='long')notes+=`<p class="note">${esc(t)}</p>`;
+    else chips+=`<span class="chip"><i>${esc(f.l)}</i> ${esc(t)}</span>`;
+  });
+  return`<article class="card"><div class="cmain" data-act="medit" data-mod="${id}" data-id="${r.id}"><h3>${esc(title)}</h3><div class="chips">${chips}</div>${notes}</div>${acts?`<div class="acts">${acts}</div>`:''}</article>`;
+}
+function moduleHtml(id){
+  const m=getModules()[id];
+  return`<div class="mhead"><h2>${esc(m.title)}</h2><div class="row"><button class="btn primary" data-act="madd" data-id="${id}">Add</button><button class="btn ghost" data-act="mcust" data-id="${id}">Edit fields</button></div></div>
+  <input class="search" data-in="mq" data-id="${id}" placeholder="Search ${esc(m.title)}" value="${esc(ui.q[id]||'')}">
+  <div id="mlist">${moduleList(id)}</div>`;
+}
+async function editEntry(id,row){
+  const m=getModules()[id],d=row?row.data:{};
+  const body=m.fields.map(f=>`<label class="fld"><span>${esc(f.l)}</span>${fieldInput(f,d[f.k])}</label>`).join('');
+  const x=await modal(row?'Edit entry':'New entry in '+m.title,body,{danger:row?'Delete':null});
+  if(x.action==='danger'){
+    if(!confirm('Delete this entry?'))return;
+    m.fields.filter(f=>f.t==='file'&&d[f.k]&&d[f.k].path).forEach(f=>dropStored(d[f.k].path));
+    await dbDel(row);refresh();return;
+  }
+  if(x.action!=='ok')return;
+  const out=await readForm(x.root,m.fields,d);
+  if(row){row.data=out;await dbUpd(row);}else await dbAdd('m:'+id,out);
+  refresh();
+}
+/* edit fields dialog */
+let cf=null;
+const drawCf=()=>{
+  const b=$('#cfbody');if(!b)return;
+  b.innerHTML=`<label class="fld"><span>Section name</span><input id="cfname" value="${esc(cf.title)}"></label>`+
+  cf.fields.map((f,i)=>`<div class="cfrow" data-i="${i}"><input class="cfl" value="${esc(f.l)}" aria-label="Field name">
+    <select class="cft" aria-label="Field type">${Object.entries(TYPES).map(([k,v])=>`<option value="${k}" ${k===f.t?'selected':''}>${v}</option>`).join('')}</select>
+    ${f.t==='select'?`<input class="cfo" value="${esc((f.o||[]).join(', '))}" placeholder="Choices, separated by commas">`:''}
+    <div class="cfacts"><button class="btn ghost small" data-act="cf-up" data-i="${i}">Move up</button><button class="btn ghost small" data-act="cf-down" data-i="${i}">Move down</button><button class="btn danger small" data-act="cf-del" data-i="${i}">Remove</button></div></div>`).join('')+
+  `<button class="btn small" data-act="cf-add" style="margin-top:.7rem">Add a field</button><p class="small">The first field is the title shown on each card. Removing a field hides it; entries keep their data.</p>`;
+};
+const syncCf=()=>{
+  if(!cf||!$('#cfbody'))return;
+  const n=$('#cfname');if(n)cf.title=n.value;
+  $$('#cfbody .cfrow').forEach(row=>{
+    const f=cf.fields[+row.dataset.i];if(!f)return;
+    f.l=$('.cfl',row).value;f.t=$('.cft',row).value;
+    const o=$('.cfo',row);if(f.t==='select')f.o=o?o.value.split(',').map(s=>s.trim()).filter(Boolean):(f.o||[]);else delete f.o;
+  });
+};
+async function customize(id){
+  const mods=getModules(),m=mods[id];
+  cf={fields:m.fields.map(f=>({...f,o:f.o?[...f.o]:undefined})),title:m.title};
+  const p=modal('Edit section','<div id="cfbody"></div>',{ok:'Save changes',danger:m.custom?'Remove section':null});
+  drawCf();
+  const x=await p;
+  if(x.action==='danger'){
+    if(confirm('Remove this section from the app? Your entries stay in the database but will no longer show.')){
+      delete mods[id];await cfgSet('modules',mods);cf=null;location.hash='#'+m.group;refresh();
+    }
+    cf=null;return;
+  }
+  if(x.action==='ok'){
+    syncCf();
+    const fs=cf.fields.filter(f=>f.l.trim());
+    if(!fs.length){toast('A section needs at least one field.');cf=null;return;}
+    mods[id]={...m,title:cf.title.trim()||m.title,fields:fs};
+    await cfgSet('modules',mods);
+  }
+  cf=null;refresh();
+}
+async function addSection(group){
+  const x=await modal('New section',`<label class="fld"><span>Section name</span><input name="name" placeholder="For example: Podcasts"></label>`,{ok:'Create'});
+  if(x.action!=='ok')return;
+  const name=gv(x.root,'name');if(!name)return;
+  const mods=getModules(),id='c'+Date.now().toString(36);
+  mods[id]={group,title:name,custom:true,fields:[{k:'name',l:'Name',t:'text'},{k:'status',l:'Status',t:'text'},{k:'note',l:'Notes',t:'long'}]};
+  await cfgSet('modules',mods);location.hash=`#${group}/${id}`;
+}
+const subbar=(items,act,base,extra='')=>`<div class="pills">${items.map(([id,t])=>`<a href="#${base}/${id}" class="${id===act?'on':''}">${esc(t)}</a>`).join('')}${extra}</div>`;
+function viewGroup(group,sub){
+  const mods=getModules();
+  const items=Object.entries(mods).filter(([,m])=>m.group===group).map(([id,m])=>[id,m.title]);
+  if(!items.some(i=>i[0]===sub))sub=items[0][0];
+  view.innerHTML=subbar(items,sub,group,`<button class="pill-add" data-act="addsec" data-g="${group}">+ New section</button>`)+moduleHtml(sub);
+}
+
+/* ---------- office ---------- */
+function officeItems(){
+  const m=getModules(),fixed=['salary','sheets','exams','service','records'];
+  const items=fixed.map(id=>[id,id==='sheets'?'Sheet tools':id==='records'?'Record branch':m[id].title]);
+  Object.entries(m).forEach(([id,x])=>{if(x.group==='office'&&!fixed.includes(id))items.push([id,x.title]);});
+  return items;
+}
+function viewOffice(sub){
+  const items=officeItems();sub=sub||'salary';if(!items.some(i=>i[0]===sub))sub='salary';
+  const bar=subbar(items,sub,'office','<button class="pill-add" data-act="addsec" data-g="office">+ New section</button>');
+  view.innerHTML=bar+(sub==='sheets'?sheetsHtml():sub==='records'?recordsHtml():moduleHtml(sub));
+}
+
+/* --- record branch --- */
+const DEF_VILLAGES=Array.from({length:42},(_,i)=>({id:'v'+pad(i+1),name:'Village '+pad(i+1)}));
+const DEF_GENRES=[{id:'g1',name:'7/12 Utara'},{id:'g2',name:'8-A'},{id:'g3',name:'Hakk Patrak'},{id:'g4',name:'Ferfar (Mutation)'},
+  {id:'g5',name:'Land revenue register'},{id:'g6',name:'Court cases'},{id:'g7',name:'Orders and letters'},{id:'g8',name:'Other'}];
+const villages=()=>cfgGet('villages',DEF_VILLAGES);
+const genres=()=>cfgGet('genres',DEF_GENRES);
+function recStats(){
+  const byV={},byVG={};let size=0;const recs=cache.record||[];
+  recs.forEach(r=>{const d=r.data;byV[d.village]=(byV[d.village]||0)+1;(byVG[d.village]=byVG[d.village]||{});byVG[d.village][d.genre]=(byVG[d.village][d.genre]||0)+1;size+=d.size||0;});
+  return{n:recs.length,byV,byVG,size};
+}
+const qbarHtml=()=>ui.queue.size?`<div class="qbar"><span>${ui.queue.size} selected</span><span class="sp"></span><button class="btn primary small" data-act="rprint">Print selected</button><button class="btn ghost small" data-act="rclear">Clear</button></div>`:'';
+function recordsHtml(){
+  const R=ui.rec,st=recStats();
+  return`<div class="mhead"><h2>Record branch</h2><div class="row"><button class="btn ghost" data-act="rmode" data-v="${R.view==='coverage'?'shelf':'coverage'}">${R.view==='coverage'?'Villages':'Coverage check'}</button><a class="btn ghost" href="#settings">Edit villages</a></div></div>
+  <p class="small">${st.n} files, ${fmtSize(st.size)} used. The free storage limit is 1 GB.</p>
+  <input class="search" data-in="rq" placeholder="Search all records by name, survey no., year or note" value="${esc(R.q)}">
+  <div id="qslot">${qbarHtml()}</div><div id="rbody">${recBody()}</div>`;
+}
+function recBody(){const R=ui.rec;if(R.q.trim())return recSearchHtml();if(R.view==='village')return recVillageHtml();if(R.view==='coverage')return recCoverageHtml();return recShelfHtml();}
+function recShelfHtml(){
+  const st=recStats(),gs=genres();
+  return`<div class="shelf">${villages().map(v=>{const n=st.byV[v.id]||0,filled=Object.keys(st.byVG[v.id]||{}).length;
+    return`<button class="folder" data-act="rvillage" data-id="${v.id}"><span class="fname">${esc(v.name)}</span><span class="fmeta">${filled} of ${gs.length} types</span><span class="stamp ${n?'':'zero'}">${n}</span></button>`}).join('')}</div>`;
+}
+function recRow(r,crumb){
+  const d=r.data;
+  return`<div class="rrow"><label class="rsel"><input type="checkbox" data-ch="rq1" data-id="${r.id}" ${ui.queue.has(r.id)?'checked':''} aria-label="Select for printing"></label>
+  <div class="rmain" data-act="redit" data-id="${r.id}"><div class="rname">${esc(d.name)}</div>${crumb?`<div class="small">${esc(crumb)}</div>`:''}
+  <div class="chips">${d.year?`<span class="chip"><i>Year</i> ${esc(d.year)}</span>`:''}${d.survey?`<span class="chip"><i>Survey no.</i> ${esc(d.survey)}</span>`:''}<span class="chip">${fmtSize(d.size||0)}</span></div>
+  ${d.note?`<p class="note">${esc(d.note)}</p>`:''}</div><button class="btn small" data-act="ropen" data-id="${r.id}">View</button></div>`;
+}
+function recVillageHtml(){
+  const R=ui.rec,v=villages().find(x=>x.id===R.vid);
+  if(!v){R.view='shelf';return recShelfHtml();}
+  const recs=(cache.record||[]).filter(r=>r.data.village===v.id);
+  return`<div class="crumb"><button class="btn ghost small" data-act="rmode" data-v="shelf">All villages</button><h3>${esc(v.name)}</h3></div>`+
+  genres().map(g=>{
+    const rs=recs.filter(r=>r.data.genre===g.id).sort((a,b)=>a.data.name.localeCompare(b.data.name));
+    return`<section class="gsec"><div class="ghead"><h4>${esc(g.name)} <span class="small">${rs.length} file${rs.length===1?'':'s'}</span></h4>
+    <div class="row"><button class="btn small" data-act="rup" data-g="${g.id}">Add files</button><button class="btn small" data-act="rcam" data-g="${g.id}">Take photo</button></div></div>
+    ${rs.length?rs.map(r=>recRow(r)).join(''):'<p class="empty small">No files yet.</p>'}</section>`;
+  }).join('')+
+  `<input type="file" id="fup" hidden multiple accept="image/*,application/pdf" data-ch="rfile"><input type="file" id="fcam" hidden accept="image/*" capture="environment" data-ch="rfile">`;
+}
+function recSearchHtml(){
+  const q=ui.rec.q.toLowerCase().trim(),vs=Object.fromEntries(villages().map(v=>[v.id,v.name])),gs=Object.fromEntries(genres().map(g=>[g.id,g.name]));
+  const hits=(cache.record||[]).filter(r=>{const d=r.data;return[d.name,d.survey,d.year,d.note,vs[d.village],gs[d.genre]].some(x=>String(x||'').toLowerCase().includes(q));}).slice(0,100);
+  return hits.length?hits.map(r=>recRow(r,`${vs[r.data.village]||'?'} › ${gs[r.data.genre]||'?'}`)).join(''):'<p class="empty">No file matches.</p>';
+}
+function recCoverageHtml(){
+  const st=recStats(),gs=genres();
+  return`<div class="tscroll"><table class="cov"><thead><tr><th>Village</th>${gs.map(g=>`<th>${esc(g.name)}</th>`).join('')}</tr></thead><tbody>${villages().map(v=>`<tr><th class="vn" data-act="rvillage" data-id="${v.id}">${esc(v.name)}</th>${gs.map(g=>{const n=(st.byVG[v.id]||{})[g.id]||0;return`<td class="${n?'has':'miss'}" data-act="rvillage" data-id="${v.id}">${n||'–'}</td>`}).join('')}</tr>`).join('')}</tbody></table></div><p class="small">A red dash means nothing is uploaded yet for that village and document type. Tap a row to open the village.</p>`;
+}
+
+/* --- sheet tools (free, runs fully in the browser) --- */
+const letter=i=>{let s='';i++;while(i>0){const m=(i-1)%26;s=String.fromCharCode(65+m)+s;i=Math.floor((i-1)/26);}return s};
+const numv=v=>{const n=parseFloat(String(v).replace(/[,₹\s]/g,''));return isNaN(n)?null:n};
+const OPS={sort:'Sort rows',filter:'Keep only some rows',delcol:'Delete columns',calc:'Add a calculated column',total:'Add a total row',replace:'Find and replace',dedupe:'Remove duplicate rows'};
+const colOpts=(S,withAll)=>(withAll||'')+(S.grid[S.hdr]||[]).map((h,i)=>`<option value="${i}">${letter(i)}: ${esc(h||'(blank)')}</option>`).join('');
+const colChecks=(S,name)=>`<div class="chips" style="margin-bottom:.8rem">${(S.grid[S.hdr]||[]).map((h,i)=>`<label class="chip chk"><input type="checkbox" name="${name}" value="${i}"> ${letter(i)}: ${esc(h||'(blank)')}</label>`).join('')}</div>`;
+function opForm(S){
+  const f=(l,body)=>`<label class="fld"><span>${l}</span>${body}</label>`;
+  switch(S.op){
+    case'sort':return f('Column',`<select id="op-col">${colOpts(S)}</select>`)+f('Order','<select id="op-dir"><option value="asc">Smallest or A to Z first</option><option value="desc">Largest or Z to A first</option></select>');
+    case'filter':return f('Column',`<select id="op-col">${colOpts(S)}</select>`)+f('Keep rows where the cell','<select id="op-mode"><option value="contains">contains</option><option value="eq">equals</option><option value="gt">is greater than</option><option value="lt">is less than</option><option value="filled">is not blank</option></select>')+f('Value','<input id="op-val">');
+    case'delcol':return'<p class="small">Tick the columns to delete.</p>'+colChecks(S,'op-del');
+    case'calc':return f('New column name','<input id="op-name" placeholder="For example: Net pay">')+f('First value',`<select id="op-a">${colOpts(S)}</select>`)+f('Operation','<select id="op-op"><option value="+">plus (+)</option><option value="-">minus (−)</option><option value="*">times (×)</option><option value="/">divided by (÷)</option></select>')+f('Second value is','<select id="op-bmode"><option value="col">another column</option><option value="num">a fixed number</option></select>')+f('Second column',`<select id="op-b">${colOpts(S)}</select>`)+f('Or fixed number','<input id="op-bn" inputmode="decimal" placeholder="For example: 12">');
+    case'total':return'<p class="small">Tick the columns to add up. A Total row is added at the bottom.</p>'+colChecks(S,'op-sum');
+    case'replace':return f('Find','<input id="op-find">')+f('Replace with','<input id="op-repl">')+f('Where',`<select id="op-rcol">${colOpts(S,'<option value="all">Everywhere</option>')}</select>`);
+    case'dedupe':return f('Rows are duplicates when this matches',`<select id="op-dcol">${colOpts(S,'<option value="all">The entire row</option>')}</select>`);
+  }
+  return'';
+}
+function tableHtml(rows,max,hdr){
+  return`<div class="tscroll"><table class="prev">${rows.slice(0,max).map((r,i)=>`<tr class="${i===hdr?'hd':''}">${r.map(c=>`<td>${esc(c)}</td>`).join('')}</tr>`).join('')}</table></div>${rows.length>max?`<p class="small">Showing the first ${max} of ${rows.length} rows.</p>`:''}`;
+}
+function sheetsHtml(){
+  const S=ui.sheet;let body='';
+  if(S){
+    body=`<p><b>${esc(S.name)}</b> <span class="small">${S.grid.length} rows</span></p>
+    ${S.names.length>1?`<label class="fld"><span>Sheet</span><select data-ch="ssheet">${S.names.map(n=>`<option ${n===S.sel?'selected':''}>${esc(n)}</option>`).join('')}</select></label>`:''}
+    <label class="fld"><span>Which row holds the column headings?</span><input type="number" min="1" value="${S.hdr+1}" data-ch="shdr" style="max-width:8rem"></label>
+    ${tableHtml(S.grid,12,S.hdr)}
+    <section class="blk"><h3>Change the sheet</h3>
+    <label class="fld"><span>What do you want to do?</span><select data-ch="sop">${Object.entries(OPS).map(([k,v])=>`<option value="${k}" ${k===S.op?'selected':''}>${v}</option>`).join('')}</select></label>
+    ${opForm(S)}
+    <div class="row"><button class="btn primary" data-act="sapply">Apply</button><button class="btn ghost" data-act="sundo" ${S.hist.length?'':'disabled'}>Undo</button><button class="btn ghost" data-act="sreset">Start over</button></div></section>
+    <button class="btn primary" data-act="sdl">Download Excel file</button>`;
+  }
+  return`<div class="mhead"><h2>Sheet tools</h2></div>
+  <p class="small">Open a salary sheet or any Excel or CSV file, change it step by step (sort, filter, calculate, total, replace, remove duplicates), then download the new file. Everything happens inside your browser, so nothing is uploaded anywhere and your original file is never changed. Formulas and merged cells become plain values.</p>
+  <label class="btn" for="sfile">Choose Excel or CSV file</label><input id="sfile" type="file" hidden accept=".xlsx,.xls,.csv" data-ch="sfile">
+  <div style="margin-top:1rem">${body}</div>`;
+}
+function loadSheet(){
+  const S=ui.sheet,ws=S.wb.Sheets[S.sel];
+  const a=XLSX.utils.sheet_to_json(ws,{header:1,defval:'',raw:false});
+  let w=0;a.forEach(r=>{w=Math.max(w,r.length)});
+  S.grid=a.map(r=>{const x=r.map(c=>String(c==null?'':c));while(x.length<w)x.push('');return x;}).filter(r=>r.some(c=>c!==''));
+  S.orig=S.grid.map(r=>[...r]);S.hist=[];
+  const i=S.grid.slice(0,10).findIndex(r=>r.filter(c=>c!=='').length>=2);S.hdr=i<0?0:i;
+}
+
+/* ---------- tasks and calendar ---------- */
+function taskItem(r){
+  const d=r.data,od=!d.done&&d.date&&d.date<today();
+  return`<div class="task ${d.done?'done':''}"><button class="tick" data-act="tdone" data-id="${r.id}" aria-label="${d.done?'Mark as not done':'Mark as done'}">${d.done?'✓':''}</button>
+  <div class="tmain" data-act="tedit" data-id="${r.id}"><div class="ttl">${esc(d.title)}</div><div class="meta">${d.date?`<span class="${od?'late':''}">${fmtDate(d.date)}</span>`:''}${d.priority==='High'?'<span class="late">High priority</span>':''}${d.repeat&&d.repeat!=='None'?`<span>Repeats ${esc(d.repeat.toLowerCase())}</span>`:''}${d.note?`<span>${esc(d.note)}</span>`:''}</div></div></div>`;
+}
+const quickAdd=()=>`<div class="qadd"><input id="tq-title" placeholder="Add a task" data-enter="tquick"><input id="tq-date" type="date" value="${today()}" aria-label="Due date"><button class="btn primary" data-act="tquick">Add</button></div>`;
+function listHtml(){
+  const t=today(),all=cache.task||[],open=all.filter(r=>!r.data.done);
+  const g=(title,rows,cls='')=>rows.length?`<section class="blk"><h3 class="${cls}">${title} (${rows.length})</h3>${rows.map(taskItem).join('')}</section>`:'';
+  const late=open.filter(r=>r.data.date&&r.data.date<t).sort(byDate),td=open.filter(r=>r.data.date===t),
+    soon=open.filter(r=>r.data.date>t&&r.data.date<=addDays(t,7)).sort(byDate),later=open.filter(r=>r.data.date>addDays(t,7)).sort(byDate),
+    none=open.filter(r=>!r.data.date),done=all.filter(r=>r.data.done).sort((a,b)=>(b.data.doneAt||'')<(a.data.doneAt||'')?-1:1).slice(0,15);
+  return quickAdd()+g('Overdue',late,'late')+g('Today',td)+g('Next 7 days',soon)+g('Later',later)+g('No date',none)+
+    (done.length?`<details class="blk"><summary>Completed (${done.length})</summary>${done.map(taskItem).join('')}</details>`:'')+
+    (!all.length?'<p class="empty">No tasks yet. Add your first one above.</p>':'');
+}
+function calHtml(){
+  const t=today();
+  if(!ui.cal){const n=new Date();ui.cal={y:n.getFullYear(),m:n.getMonth(),sel:t};}
+  const{y,m,sel}=ui.cal,first=new Date(y,m,1),start=first.getDay(),days=new Date(y,m+1,0).getDate();
+  const cnt={};(cache.task||[]).filter(r=>!r.data.done&&r.data.date).forEach(r=>{cnt[r.data.date]=(cnt[r.data.date]||0)+1});
+  let cells='';for(let i=0;i<start;i++)cells+='<span></span>';
+  for(let d=1;d<=days;d++){const ds=`${y}-${pad(m+1)}-${pad(d)}`;cells+=`<button class="day ${ds===t?'today':''} ${ds===sel?'sel':''}" data-act="calsel" data-d="${ds}"><b>${d}</b>${cnt[ds]?`<i>${cnt[ds]}</i>`:''}</button>`;}
+  const dayTasks=(cache.task||[]).filter(r=>r.data.date===sel);
+  return`<div class="calhead"><button class="btn ghost small" data-act="calnav" data-n="-1">Previous</button><h3>${first.toLocaleDateString('en-IN',{month:'long',year:'numeric'})}</h3><button class="btn ghost small" data-act="calnav" data-n="1">Next</button></div>
+  <div class="cal">${['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(w=>`<span class="wd">${w}</span>`).join('')}${cells}</div>
+  <section class="blk"><div class="ghead"><h3>${fmtDate(sel)}</h3><button class="btn small primary" data-act="caladd">Add task on this day</button></div>${dayTasks.length?dayTasks.map(taskItem).join(''):'<p class="empty small">Nothing on this day.</p>'}</section>`;
+}
+function viewTasks(sub){
+  sub=sub==='cal'?'cal':'list';
+  view.innerHTML=subbar([['list','List'],['cal','Calendar']],sub,'tasks')+(sub==='cal'?calHtml():listHtml());
+}
+async function editTask(row,preDate){
+  const d=row?row.data:{title:'',date:preDate||'',priority:'Normal',repeat:'None',note:''};
+  const sel=(n,opts,v)=>`<select name="${n}">${opts.map(o=>`<option ${o===v?'selected':''}>${o}</option>`).join('')}</select>`;
+  const body=`<label class="fld"><span>Task</span><input name="title" value="${esc(d.title)}"></label>
+  <label class="fld"><span>Due date</span><input type="date" name="date" value="${esc(d.date||'')}"></label>
+  <label class="fld"><span>Priority</span>${sel('priority',['Normal','High','Low'],d.priority||'Normal')}</label>
+  <label class="fld"><span>Repeats</span>${sel('repeat',['None','Daily','Weekly','Monthly'],d.repeat||'None')}</label>
+  <label class="fld"><span>Note</span><textarea name="note" rows="2">${esc(d.note||'')}</textarea></label>`;
+  const x=await modal(row?'Edit task':'New task',body,{danger:row?'Delete':null});
+  if(x.action==='danger'){if(confirm('Delete this task?')){await dbDel(row);refresh();}return;}
+  if(x.action!=='ok')return;
+  const out={...d,title:gv(x.root,'title'),date:gv(x.root,'date'),priority:gv(x.root,'priority'),repeat:gv(x.root,'repeat'),note:gv(x.root,'note')};
+  if(!out.title){toast('Give the task a name.');return;}
+  if(row){row.data=out;await dbUpd(row);}else await dbAdd('task',out);
+  refresh();
+}
+
+/* ---------- search ---------- */
+const DEF_ENGINES=[
+  {n:'Google',u:'https://www.google.com/search?q=%s'},{n:'Bing',u:'https://www.bing.com/search?q=%s'},
+  {n:'DuckDuckGo',u:'https://duckduckgo.com/?q=%s'},{n:'Brave',u:'https://search.brave.com/search?q=%s'},
+  {n:'Yahoo',u:'https://search.yahoo.com/search?p=%s'},{n:'YouTube',u:'https://www.youtube.com/results?search_query=%s'},
+  {n:'Google Images',u:'https://www.google.com/search?tbm=isch&q=%s'},{n:'Google News',u:'https://news.google.com/search?q=%s'},
+  {n:'Wikipedia',u:'https://en.wikipedia.org/w/index.php?search=%s'},{n:'Google Scholar',u:'https://scholar.google.com/scholar?q=%s'}];
+const engines=()=>cfgGet('engines',DEF_ENGINES);
+function viewSearch(){
+  const eng=engines(),rec=JSON.parse(localStorage.getItem('recent')||'[]');
+  view.innerHTML=`<div class="mhead"><h2>Search everywhere</h2></div>
+  <div class="bigsearch"><input id="sq" placeholder="Type what you want to find" data-enter="sall" autofocus><button class="btn primary" data-act="sall">Search selected</button></div>
+  ${rec.length?`<div class="chips sug">${rec.map(q=>`<button class="chip" data-act="srecent" data-q="${esc(q)}">${esc(q)}</button>`).join('')}</div>`:''}
+  <section class="blk">${eng.map((e,i)=>`<div class="eng"><label><input type="checkbox" data-ch="etog" data-i="${i}" ${ui.engOff.has(e.n)?'':'checked'}> ${esc(e.n)}</label><button class="btn small" data-act="sone" data-i="${i}">Open</button></div>`).join('')}</section>
+  <p class="small">Tick the engines you want, then tap Search selected. Each opens in its own tab. If only one opens, allow pop-ups for this site. You can change the list in Settings.</p>`;
+}
+function sq(){
+  const q=($('#sq').value||'').trim();if(!q){toast('Type something to search.');return null;}
+  const rec=JSON.parse(localStorage.getItem('recent')||'[]').filter(x=>x!==q);rec.unshift(q);
+  localStorage.setItem('recent',JSON.stringify(rec.slice(0,8)));return encodeURIComponent(q);
+}
+
+/* ---------- home ---------- */
+function viewHome(){
+  const t=today(),open=(cache.task||[]).filter(r=>!r.data.done);
+  const due=open.filter(r=>r.data.date===t),late=open.filter(r=>r.data.date&&r.data.date<t).sort(byDate),
+    soon=open.filter(r=>r.data.date>t&&r.data.date<=addDays(t,7)).sort(byDate),st=recStats();
+  view.innerHTML=`<div class="hello"><h2>${new Date().toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long'})}</h2></div>
+  ${quickAdd()}
+  ${late.length?`<section class="blk"><h3 class="late">Overdue (${late.length})</h3>${late.map(taskItem).join('')}</section>`:''}
+  <section class="blk"><h3>Today</h3>${due.length?due.map(taskItem).join(''):'<p class="empty small">Nothing due today.</p>'}</section>
+  <section class="blk"><h3>Next 7 days</h3>${soon.length?soon.map(taskItem).join(''):'<p class="empty small">Nothing coming up.</p>'}</section>
+  <section class="blk"><h3>Record branch</h3><p>${st.n} files in ${Object.keys(st.byV).length} of ${villages().length} villages. <a href="#office/records">Open record branch</a></p></section>`;
+}
+
+/* ---------- settings ---------- */
+function lmHtml(key){
+  const list=key==='villages'?villages():genres();
+  return list.map((x,i)=>`<div class="lmrow"><input value="${esc(x.name)}" data-ch="lmren" data-key="${key}" data-i="${i}" aria-label="Name"><button class="btn ghost small" data-act="lmdel" data-key="${key}" data-i="${i}">Remove</button></div>`).join('')+
+  `<div class="lmrow"><input id="lmnew-${key}" placeholder="Add new" data-enter="lmadd" data-key="${key}"><button class="btn small" data-act="lmadd" data-key="${key}">Add</button></div>
+  <details><summary class="small">Paste many names at once</summary><textarea id="lmbulk-${key}" rows="6" placeholder="One name per line. These names replace the existing ones in order. Extra lines are added at the end."></textarea><button class="btn small" data-act="lmbulk" data-key="${key}" style="margin-top:.4rem">Apply names</button></details>`;
+}
+function viewSettings(){
+  const eng=engines().map(e=>`${e.n} | ${e.u}`).join('\n');
+  view.innerHTML=`<div class="mhead"><h2>Settings</h2></div>
+  <section class="blk"><h3>App name</h3><div class="row"><input id="set-name" value="${esc(appName())}" style="max-width:20rem"><button class="btn" data-act="setname">Save</button></div></section>
+  <section class="blk"><h3>Villages</h3><p class="small">Rename them to your real village names. Files stay attached when you rename.</p>${lmHtml('villages')}</section>
+  <section class="blk"><h3>Document types</h3>${lmHtml('genres')}</section>
+  <section class="blk"><h3>Search engines</h3><p class="small">One per line: name | web address. Write %s where the search words go.</p><textarea id="set-eng" rows="8">${esc(eng)}</textarea><button class="btn" data-act="seteng" style="margin-top:.4rem">Save engines</button></section>
+  <section class="blk"><h3>Backup</h3><p class="small">Downloads all your entries and settings in one file. Scanned files stay in storage and are not inside this file. Restore only into a fresh, empty app.</p><div class="row"><button class="btn" data-act="bexp">Download backup</button><label class="btn" for="bimp">Restore from backup</label><input id="bimp" type="file" hidden accept=".json" data-ch="bimp"></div></section>
+  <section class="blk"><h3>Account</h3><p class="small">${esc(user.email)}</p><button class="btn danger" data-act="logout">Sign out</button></section>`;
+}
+
+/* ---------- actions ---------- */
+const A={},I={},C={};
+A.medit=el=>editEntry(el.dataset.mod,find('m:'+el.dataset.mod,el.dataset.id));
+A.madd=el=>editEntry(el.dataset.id,null);
+A.mcust=el=>customize(el.dataset.id);
+A.addsec=el=>addSection(el.dataset.g);
+A.ofile=el=>openStored(el.dataset.path);
+A.bump=el=>{
+  const r=Object.keys(cache).filter(k=>k.startsWith('m:')).map(k=>find(k,el.dataset.id)).find(Boolean);
+  if(r){r.data.clicks=(r.data.clicks||0)+1;run(()=>dbUpd(r));}
+};
+A['cf-add']=()=>{syncCf();cf.fields.push({k:'f'+Math.random().toString(36).slice(2,7),l:'New field',t:'text'});drawCf();};
+A['cf-del']=el=>{syncCf();if(cf.fields.length>1){cf.fields.splice(+el.dataset.i,1);drawCf();}};
+A['cf-up']=el=>{syncCf();const i=+el.dataset.i;if(i>0){[cf.fields[i-1],cf.fields[i]]=[cf.fields[i],cf.fields[i-1]];drawCf();}};
+A['cf-down']=el=>{syncCf();const i=+el.dataset.i;if(i<cf.fields.length-1){[cf.fields[i+1],cf.fields[i]]=[cf.fields[i],cf.fields[i+1]];drawCf();}};
+I.mq=el=>{ui.q[el.dataset.id]=el.value;$('#mlist').innerHTML=moduleList(el.dataset.id);};
+
+/* tasks */
+A.tquick=async()=>{
+  const t=$('#tq-title');const title=t.value.trim();if(!title)return;
+  const dEl=$('#tq-date');
+  await dbAdd('task',{title,date:dEl?dEl.value:'',priority:'Normal',repeat:'None',note:''});refresh();
+};
+A.tedit=el=>editTask(find('task',el.dataset.id));
+A.tdone=async el=>{
+  const r=find('task',el.dataset.id),d={...r.data};
+  if(d.done){d.done=false;delete d.doneAt;}
+  else if(d.repeat&&d.repeat!=='None'){
+    let n=nextDate(d.date||today(),d.repeat),g=0;while(n<=today()&&g++<400)n=nextDate(n,d.repeat);
+    d.date=n;toast('Next due '+fmtDate(n));
+  }else{d.done=true;d.doneAt=today();}
+  r.data=d;await dbUpd(r);refresh();
+};
+A.calsel=el=>{ui.cal.sel=el.dataset.d;refresh();};
+A.calnav=el=>{let{y,m}=ui.cal;m+=+el.dataset.n;if(m<0){m=11;y--;}if(m>11){m=0;y++;}ui.cal={...ui.cal,y,m};refresh();};
+A.caladd=()=>editTask(null,ui.cal.sel);
+
+/* search */
+A.sone=el=>{const q=sq();if(q)window.open(engines()[+el.dataset.i].u.replace('%s',q),'_blank');};
+A.sall=()=>{const q=sq();if(!q)return;const e=engines().filter(x=>!ui.engOff.has(x.n));e.forEach(x=>window.open(x.u.replace('%s',q),'_blank'));if(e.length>1)toast('If only one tab opened, allow pop-ups for this site.');};
+A.srecent=el=>{$('#sq').value=el.dataset.q;};
+C.etog=el=>{const n=engines()[+el.dataset.i].n;if(el.checked)ui.engOff.delete(n);else ui.engOff.add(n);localStorage.setItem('engOff',JSON.stringify([...ui.engOff]));};
+
+/* record branch */
+A.rvillage=el=>{ui.rec.vid=el.dataset.id;ui.rec.view='village';ui.rec.q='';refresh();window.scrollTo(0,0);};
+A.rmode=el=>{ui.rec.view=el.dataset.v;ui.rec.q='';refresh();};
+I.rq=el=>{ui.rec.q=el.value;$('#rbody').innerHTML=recBody();};
+C.rq1=el=>{if(el.checked)ui.queue.add(el.dataset.id);else ui.queue.delete(el.dataset.id);$('#qslot').innerHTML=qbarHtml();};
+A.rclear=()=>{ui.queue.clear();refresh();};
+A.rup=el=>{ui.upG=el.dataset.g;$('#fup').click();};
+A.rcam=el=>{ui.upG=el.dataset.g;$('#fcam').click();};
+C.rfile=async el=>{
+  const files=[...el.files];el.value='';if(!files.length)return;
+  const g=ui.upG,v=ui.rec.vid;let ok=0;
+  for(const f of files){
+    toast(`Uploading ${ok+1} of ${files.length}…`);
+    const done=await run(async()=>{const u=await putFile(f,`records/${v}/${g}`);
+      return dbAdd('record',{village:v,genre:g,name:f.name.replace(/\.[^.]+$/,''),path:u.path,size:u.size,type:u.type,year:'',survey:'',note:''});});
+    if(done)ok++;
+  }
+  toast(`${ok} file${ok===1?'':'s'} uploaded`);refresh();
+};
+A.ropen=el=>openStored(find('record',el.dataset.id).data.path);
+A.redit=async el=>{
+  const r=find('record',el.dataset.id),d=r.data,vs=villages(),gs=genres();
+  const opt=(list,cur)=>list.map(v=>`<option value="${v.id}" ${v.id===cur?'selected':''}>${esc(v.name)}</option>`).join('');
+  const body=`<label class="fld"><span>Name</span><input name="name" value="${esc(d.name)}"></label>
+  <label class="fld"><span>Year</span><input name="year" value="${esc(d.year)}" inputmode="numeric"></label>
+  <label class="fld"><span>Survey no.</span><input name="survey" value="${esc(d.survey)}"></label>
+  <label class="fld"><span>Village</span><select name="village">${opt(vs,d.village)}</select></label>
+  <label class="fld"><span>Document type</span><select name="genre">${opt(gs,d.genre)}</select></label>
+  <label class="fld"><span>Note</span><textarea name="note" rows="3">${esc(d.note)}</textarea></label>`;
+  const x=await modal('File details',body,{danger:'Delete file'});
+  if(x.action==='danger'){
+    if(!confirm('Delete this file permanently?'))return;
+    await dropStored(d.path);await dbDel(r);ui.queue.delete(r.id);refresh();return;
+  }
+  if(x.action!=='ok')return;
+  r.data={...d,name:gv(x.root,'name')||d.name,year:gv(x.root,'year'),survey:gv(x.root,'survey'),village:gv(x.root,'village'),genre:gv(x.root,'genre'),note:gv(x.root,'note')};
+  await dbUpd(r);refresh();
+};
+A.rprint=async()=>{
+  const recs=[...ui.queue].map(id=>find('record',id)).filter(Boolean);if(!recs.length)return;
+  const isImg=r=>(r.data.type||'').startsWith('image/');
+  const imgs=recs.filter(isImg),pdfs=recs.filter(r=>!isImg(r));
+  const w=imgs.length?window.open('','_blank'):null;
+  const urls=await Promise.all(recs.map(r=>sb.storage.from('records').createSignedUrl(r.data.path,3600)));
+  const url=r=>{const x=urls[recs.indexOf(r)];return x&&x.data?x.data.signedUrl:''};
+  if(w){
+    w.document.write('<!doctype html><title>Print</title><style>@page{margin:8mm}body{margin:0}img{display:block;width:100%;max-height:100vh;object-fit:contain;page-break-after:always}img:last-child{page-break-after:auto}</style>'+imgs.map(r=>`<img src="${url(r)}">`).join(''));
+    w.document.close();
+    await Promise.all([...w.document.images].map(i=>i.complete?1:new Promise(res=>{i.onload=i.onerror=res;})));
+    w.focus();w.print();
+  }
+  pdfs.forEach(r=>window.open(url(r),'_blank'));
+  if(pdfs.length)toast('PDFs opened in new tabs. Print each one from its tab.');
+};
+
+/* sheet tools */
+C.sfile=async el=>{
+  const f=el.files[0];el.value='';if(!f)return;
+  const wb=XLSX.read(await f.arrayBuffer(),{type:'array',cellDates:true});
+  ui.sheet={name:f.name,wb,names:wb.SheetNames,sel:wb.SheetNames[0],op:'sort',grid:[],orig:[],hist:[],hdr:0};
+  loadSheet();refresh();
+};
+C.ssheet=el=>{ui.sheet.sel=el.value;loadSheet();refresh();};
+C.shdr=el=>{const S=ui.sheet;S.hdr=Math.max(0,Math.min(S.grid.length-1,(+el.value||1)-1));S.hist=[];refresh();};
+C.sop=el=>{ui.sheet.op=el.value;refresh();};
+A.sundo=()=>{const S=ui.sheet;if(S.hist.length){S.grid=S.hist.pop();refresh();}};
+A.sreset=()=>{const S=ui.sheet;S.grid=S.orig.map(r=>[...r]);S.hist=[];refresh();};
+A.sapply=()=>{
+  const S=ui.sheet,h=S.hdr,g=id=>{const e=$('#'+id);return e?e.value:''};
+  if(S.grid.length<=h){toast('There are no rows to work on.');return;}
+  const head=S.grid[h],rows=S.grid.slice(h+1),top=S.grid.slice(0,h+1);
+  const checked=n=>$$(`input[name="${n}"]:checked`).map(e=>+e.value);
+  let out=null;
+  switch(S.op){
+    case'sort':{
+      const c=+g('op-col'),d=g('op-dir')==='desc'?-1:1;
+      const s=[...rows].sort((a,b)=>{const x=numv(a[c]),y=numv(b[c]);const r=(x!==null&&y!==null)?x-y:String(a[c]).localeCompare(String(b[c]));return r*d;});
+      out=[...top,...s];break;}
+    case'filter':{
+      const c=+g('op-col'),m=g('op-mode'),v=g('op-val').trim().toLowerCase();
+      if(m!=='filled'&&!v){toast('Type a value to match.');return;}
+      const keep=rows.filter(r=>{const cell=String(r[c]).trim().toLowerCase();
+        if(m==='contains')return cell.includes(v);if(m==='eq')return cell===v;if(m==='filled')return cell!=='';
+        const a=numv(cell),b=numv(v);if(a===null||b===null)return false;return m==='gt'?a>b:a<b;});
+      out=[...top,...keep];break;}
+    case'delcol':{
+      const del=new Set(checked('op-del'));if(!del.size){toast('Tick the columns to delete.');return;}
+      if(del.size>=head.length){toast('Keep at least one column.');return;}
+      out=S.grid.map(r=>r.filter((_,i)=>!del.has(i)));
+      S.hdr=Math.min(S.hdr,out.length-1);break;}
+    case'calc':{
+      const name=g('op-name').trim()||'New column',a=+g('op-a'),op=g('op-op'),bm=g('op-bmode'),b=+g('op-b'),bn=numv(g('op-bn'));
+      if(bm==='num'&&bn===null){toast('Type a number for the second value.');return;}
+      out=S.grid.map((r,i)=>{
+        if(i<h)return[...r,''];if(i===h)return[...r,name];
+        const x=numv(r[a]),y=bm==='num'?bn:numv(r[b]);let z='';
+        if(x!==null&&y!==null){const v=op==='+'?x+y:op==='-'?x-y:op==='*'?x*y:(y===0?null:x/y);if(v!==null)z=String(Math.round(v*100)/100);}
+        return[...r,z];});break;}
+    case'total':{
+      const cols=checked('op-sum');if(!cols.length){toast('Tick the columns to add up.');return;}
+      const tot=head.map((_,i)=>cols.includes(i)?String(Math.round(rows.reduce((s,r)=>s+(numv(r[i])||0),0)*100)/100):'');
+      if(!cols.includes(0))tot[0]='Total';
+      out=[...S.grid,tot];break;}
+    case'replace':{
+      const f=g('op-find'),t=g('op-repl'),c=g('op-rcol');if(!f){toast('Type what to find.');return;}
+      out=S.grid.map((r,i)=>i<h?r:r.map((cell,j)=>(c==='all'||+c===j)?cell.split(f).join(t):cell));break;}
+    case'dedupe':{
+      const c=g('op-dcol'),seen=new Set();
+      const keep=rows.filter(r=>{const k=c==='all'?JSON.stringify(r):String(r[+c]).trim().toLowerCase();if(seen.has(k))return false;seen.add(k);return true;});
+      out=[...top,...keep];break;}
+  }
+  if(!out)return;
+  S.hist.push(S.grid);S.grid=out;refresh();toast('Done. Tap Undo if that is not what you wanted.');
+};
+A.sdl=()=>{
+  const S=ui.sheet;
+  const rows=S.grid.map(r=>r.map(c=>(typeof c==='string'&&c.length<=10&&/^-?(0|[1-9]\d*)(\.\d+)?$/.test(c.trim()))?Number(c):c));
+  const ws=XLSX.utils.aoa_to_sheet(rows),wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws,'Sheet1');
+  XLSX.writeFile(wb,S.name.replace(/\.[^.]+$/,'')+'-edited.xlsx');
+};
+
+/* settings */
+A.setname=async()=>{const n=$('#set-name').value.trim()||'ClerkUnofficial';await cfgSet('appName',n);$('#brand').textContent=n;document.title=n;toast('Saved');};
+A.seteng=async()=>{
+  const list=$('#set-eng').value.split('\n').map(l=>{const p=l.split('|');return{n:(p[0]||'').trim(),u:p.slice(1).join('|').trim()};}).filter(e=>e.n&&e.u.includes('%s'));
+  if(!list.length){toast('Add at least one line like: Google | https://www.google.com/search?q=%s');return;}
+  await cfgSet('engines',list);toast('Saved');
+};
+const lmList=key=>key==='villages'?villages():genres();
+C.lmren=async el=>{const l=lmList(el.dataset.key);const x=l[+el.dataset.i];if(!x)return;x.name=el.value.trim()||x.name;await cfgSet(el.dataset.key,l);toast('Saved');};
+A.lmadd=async el=>{
+  const key=el.dataset.key,inp=$('#lmnew-'+key),name=inp.value.trim();if(!name)return;
+  const l=lmList(key);l.push({id:(key==='villages'?'v':'g')+Date.now().toString(36),name});await cfgSet(key,l);refresh();
+};
+A.lmdel=async el=>{
+  const key=el.dataset.key,l=lmList(key),x=l[+el.dataset.i];if(!x)return;
+  const field=key==='villages'?'village':'genre',n=(cache.record||[]).filter(r=>r.data[field]===x.id).length;
+  if(n){toast(`${x.name} has ${n} file${n===1?'':'s'}. Move or delete them first.`);return;}
+  if(!confirm(`Remove ${x.name}?`))return;
+  l.splice(+el.dataset.i,1);await cfgSet(key,l);refresh();
+};
+A.lmbulk=async el=>{
+  const key=el.dataset.key,lines=$('#lmbulk-'+key).value.split('\n').map(s=>s.trim()).filter(Boolean);if(!lines.length)return;
+  const l=lmList(key);
+  lines.forEach((name,i)=>{if(l[i])l[i].name=name;else l.push({id:(key==='villages'?'v':'g')+Date.now().toString(36)+i,name});});
+  await cfgSet(key,l);toast('Names applied');refresh();
+};
+A.bexp=()=>{
+  const rows=Object.values(cache).flat().map(r=>({kind:r.kind,data:r.data}));
+  const blob=new Blob([JSON.stringify({app:'clerkunofficial',version:1,rows})],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`clerkunofficial-backup-${today()}.json`;a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href),2000);
+};
+C.bimp=async el=>{
+  const f=el.files[0];el.value='';if(!f)return;
+  const j=JSON.parse(await f.text());if(!Array.isArray(j.rows))throw new Error('This is not a backup file.');
+  if(!confirm(`Restore ${j.rows.length} items? Do this only in a fresh app, or items will be duplicated.`))return;
+  for(let i=0;i<j.rows.length;i+=200){const{error}=await sb.from('items').insert(j.rows.slice(i,i+200));if(error)throw error;}
+  await loadAll();refresh();toast('Backup restored');
+};
+A.logout=async()=>{await sb.auth.signOut();location.reload();};
+
+/* sign in */
+A.login=async()=>{
+  const{error}=await sb.auth.signInWithPassword({email:$('#em').value.trim(),password:$('#pw').value});
+  if(error){$('#aerr').textContent=error.message;return;}
+  const{data}=await sb.auth.getUser();await enter(data.user);
+};
+A.signup=async()=>{
+  const{data,error}=await sb.auth.signUp({email:$('#em').value.trim(),password:$('#pw').value});
+  if(error){$('#aerr').textContent=error.message;return;}
+  if(data.session)await enter(data.user);else $('#aerr').textContent='Check your email to confirm the account, then sign in.';
+};
+
+/* ---------- events ---------- */
+document.addEventListener('click',e=>{const el=e.target.closest('[data-act]');if(!el)return;const f=A[el.dataset.act];if(f)run(()=>f(el,e));});
+document.addEventListener('input',e=>{const el=e.target.closest('[data-in]');if(el&&I[el.dataset.in])I[el.dataset.in](el,e);});
+document.addEventListener('change',e=>{
+  const el=e.target.closest('[data-ch]');if(el&&C[el.dataset.ch])run(()=>C[el.dataset.ch](el,e));
+  if(e.target.classList&&e.target.classList.contains('cft')){syncCf();drawCf();}
+});
+document.addEventListener('keydown',e=>{
+  const t=e.target;
+  if(e.key==='Enter'&&!e.shiftKey&&t.dataset&&t.dataset.enter&&t.tagName!=='BUTTON'){e.preventDefault();const f=A[t.dataset.enter];if(f)run(()=>f(t,e));}
+});
+
+/* ---------- routing ---------- */
+const TABS=[['home','Home'],['search','Search'],['personal','Personal'],['office','Office'],['links','Links'],['tasks','Tasks'],['contacts','Contacts']];
+const V={home:viewHome,search:viewSearch,personal:s=>viewGroup('personal',s),office:viewOffice,links:s=>viewGroup('links',s),
+  tasks:viewTasks,contacts:()=>{view.innerHTML=moduleHtml('contacts')},settings:viewSettings};
+function renderNav(active){$('#tabs').innerHTML=TABS.map(([id,t])=>`<a href="#${id}" class="${id===active?'on':''}">${t}</a>`).join('');}
+function route(keep){
+  const[t='home',s]=(location.hash.slice(1)||'home').split('/');
+  const key=V[t]?t:'home';renderNav(key);V[key](s);
+  if(!keep)window.scrollTo(0,0);
+}
+const refresh=()=>route(true);
+window.addEventListener('hashchange',()=>route());
+
+async function enter(u){
+  user=u;
+  try{await loadAll();}
+  catch(e){
+    console.error(e);$('#auth').hidden=true;$('#boot').hidden=false;
+    $('#boot').textContent='The database is not ready. Run setup.sql in Supabase (see SETUP-GUIDE.md), then reload. Details: '+(e.message||e);return;
+  }
+  $('#boot').hidden=true;$('#auth').hidden=true;$('#app').hidden=false;
+  $('#brand').textContent=appName();document.title=appName();
+  route();
+}
+(async function boot(){
+  try{
+    const r=await fetch('/api/config');if(!r.ok)throw new Error('config');
+    const c=await r.json();sb=window.supabase.createClient(c.url,c.key);
+  }catch(e){
+    $('#boot').textContent='Setup is not finished. Add the Supabase keys in Vercel, then redeploy (see SETUP-GUIDE.md).';return;
+  }
+  const{data}=await sb.auth.getSession();
+  if(data.session)await enter(data.session.user);
+  else{$('#boot').hidden=true;$('#auth').hidden=false;}
+})();
+</script>
+</body>
+</html>

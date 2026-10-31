@@ -1,0 +1,11 @@
+// Sends the public Supabase address and key to the app.
+// The values come from Vercel's Environment Variables, so nothing is typed into code.
+module.exports = (req, res) => {
+  res.setHeader('Cache-Control', 'no-store');
+  const url = process.env.SUPABASE_URL;
+  const key = process.env.SUPABASE_ANON_KEY;
+  if (!url || !key) {
+    return res.status(500).json({ error: 'SUPABASE_URL or SUPABASE_ANON_KEY is missing in Vercel.' });
+  }
+  res.status(200).json({ url, key });
+};
